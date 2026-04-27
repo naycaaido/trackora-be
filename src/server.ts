@@ -1,4 +1,4 @@
-import { createApp } from "./app.js";
+import createApp from "./app.js";
 import { env } from "./config/env.js";
 import { prisma } from "./config/prisma.js";
 
@@ -9,3 +9,5 @@ export async function startServer(): Promise<void> {
     console.log(`Server running on http://localhost:${env.port}`);
   });
 }
+
+startServer()

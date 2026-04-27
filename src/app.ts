@@ -19,7 +19,7 @@ import { dashboardRoutes } from "./routes/dashboard.routes.js";
 import { maintenanceRoutes } from "./routes/maintenance.routes.js";
 import { vehiclesRoutes } from "./routes/vehicles.routes.js";
 
-export function createApp() {
+export default function createApp() {
   const app = express();
 
   app.use((req, res, next) => {
