@@ -120,6 +120,39 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
   Serializable: 'Serializable'
 });
 
+exports.Prisma.UserScalarFieldEnum = {
+  id: 'id',
+  email: 'email',
+  username: 'username',
+  passwordHash: 'passwordHash',
+  role: 'role',
+  fullName: 'fullName',
+  avatarUrl: 'avatarUrl',
+  isActive: 'isActive',
+  lastLoginAt: 'lastLoginAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.RefreshTokenScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  token: 'token',
+  family: 'family',
+  isRevoked: 'isRevoked',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.PasswordResetTokenScalarFieldEnum = {
+  id: 'id',
+  email: 'email',
+  token: 'token',
+  isUsed: 'isUsed',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.VehicleScalarFieldEnum = {
   id: 'id',
   vehicleCode: 'vehicleCode',
@@ -186,6 +219,13 @@ exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
 };
+exports.UserRole = exports.$Enums.UserRole = {
+  admin: 'admin',
+  manager: 'manager',
+  technician: 'technician',
+  viewer: 'viewer'
+};
+
 exports.VehicleStatus = exports.$Enums.VehicleStatus = {
   healthy: 'healthy',
   warning: 'warning',
@@ -212,6 +252,9 @@ exports.AlertType = exports.$Enums.AlertType = {
 };
 
 exports.Prisma.ModelName = {
+  User: 'User',
+  RefreshToken: 'RefreshToken',
+  PasswordResetToken: 'PasswordResetToken',
   Vehicle: 'Vehicle',
   MaintenanceReport: 'MaintenanceReport',
   Alert: 'Alert',

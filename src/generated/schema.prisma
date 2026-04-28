@@ -8,6 +8,8 @@ datasource db {
   provider = "postgresql"
 }
 
+// ==================== ENUMS ====================
+
 enum VehicleStatus {
   healthy
   warning
@@ -32,6 +34,67 @@ enum AlertType {
   maintenance_due
   repeated_issue
 }
+
+enum UserRole {
+  admin
+  manager
+  technician
+  viewer
+}
+
+// ==================== AUTH MODELS ====================
+
+model User {
+  id           String    @id
+  email        String    @unique
+  username     String    @unique
+  passwordHash String    @map("password_hash")
+  role         UserRole  @default(viewer)
+  fullName     String?   @map("full_name")
+  avatarUrl    String?   @map("avatar_url")
+  isActive     Boolean   @default(true) @map("is_active")
+  lastLoginAt  DateTime? @map("last_login_at")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+
+  refreshTokens RefreshToken[]
+
+  @@index([email], map: "idx_users_email")
+  @@index([role], map: "idx_users_role")
+  @@map("users")
+}
+
+model RefreshToken {
+  id        String   @id
+  userId    String   @map("user_id")
+  token     String   @unique
+  family    String
+  isRevoked Boolean  @default(false) @map("is_revoked")
+  expiresAt DateTime @map("expires_at")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId], map: "idx_refresh_tokens_user_id")
+  @@index([token], map: "idx_refresh_tokens_token")
+  @@index([family], map: "idx_refresh_tokens_family")
+  @@map("refresh_tokens")
+}
+
+model PasswordResetToken {
+  id        String   @id
+  email     String
+  token     String   @unique
+  isUsed    Boolean  @default(false) @map("is_used")
+  expiresAt DateTime @map("expires_at")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([token], map: "idx_password_reset_token")
+  @@index([email], map: "idx_password_reset_email")
+  @@map("password_reset_tokens")
+}
+
+// ==================== VEHICLE MODELS ====================
 
 model Vehicle {
   id                  String                 @id

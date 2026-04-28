@@ -10,6 +10,37 @@ function getEnv(name, fallback) {
   return value;
 }
 
+function getBooleanEnv(name, fallback = "false") {
+  const value = getEnv(name, fallback).trim().toLowerCase();
+  if (value === "true") {
+    return true;
+  }
+  if (value === "false") {
+    return false;
+  }
+  throw new Error(`Invalid boolean environment variable for ${name}`);
+}
+
+function getOptionalEnv(name) {
+  const value = process.env[name];
+  if (typeof value !== "string") {
+    return undefined;
+  }
+
+  const trimmed = value.trim();
+  return trimmed || undefined;
+}
+
+function getSameSiteEnv(name, fallback = "lax") {
+  const value = getEnv(name, fallback).trim().toLowerCase();
+  if (value === "strict" || value === "lax" || value === "none") {
+    return value;
+  }
+  throw new Error(
+    `Invalid ${name}. Supported values are: strict, lax, none`,
+  );
+}
+
 const allowedOrigins = getEnv("CORS_ORIGIN", "http://localhost:5173")
   .split(",")
   .map((origin) => origin.trim())
@@ -23,4 +54,12 @@ export const env = {
     "postgres://postgres:postgres@localhost:5432/trackora",
   ),
   allowedOrigins,
+  authAccessTokenSecret: getEnv("AUTH_ACCESS_TOKEN_SECRET"),
+  authRefreshTokenSecret: getEnv("AUTH_REFRESH_TOKEN_SECRET"),
+  authAccessTokenExpiresIn: getEnv("AUTH_ACCESS_TOKEN_EXPIRES_IN", "15m"),
+  authRefreshTokenExpiresIn: getEnv("AUTH_REFRESH_TOKEN_EXPIRES_IN", "7d"),
+  authRefreshCookieName: getEnv("AUTH_REFRESH_COOKIE_NAME", "refreshToken"),
+  authCookieSecure: getBooleanEnv("AUTH_COOKIE_SECURE", "false"),
+  authCookieSameSite: getSameSiteEnv("AUTH_COOKIE_SAME_SITE", "lax"),
+  authCookieDomain: getOptionalEnv("AUTH_COOKIE_DOMAIN"),
 };
