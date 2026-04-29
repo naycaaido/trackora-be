@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import morgan from "morgan";
 import { env } from "./config/env.js";
 import { prisma } from "./config/prisma.js";
 import { createVehiclesRepository } from "./repositories/vehicles.repository.js";
@@ -75,6 +76,7 @@ export function createApp() {
   );
   app.use(express.json());
   app.use(cookieParser());
+  morgan("tiny");
 
   app.get("/health", (_req, res) => {
     res.status(200).json({

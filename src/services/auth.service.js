@@ -14,7 +14,6 @@ function toPublicUser(user) {
   return {
     id: user.id,
     email: user.email,
-    username: user.username,
     role: user.role,
     fullName: user.fullName,
     avatarUrl: user.avatarUrl,
@@ -81,16 +80,11 @@ export function createAuthService(authRepository, authConfig) {
       throw new HttpError(409, "Email is already registered");
     }
 
-    const existingUsername = await authRepository.findUserByUsername(payload.username);
-    if (existingUsername) {
-      throw new HttpError(409, "Username is already registered");
-    }
-
     const passwordHash = await bcrypt.hash(payload.password, 10);
     const user = await authRepository.createUser({
       id: randomUUID(),
       email: payload.email,
-      username: payload.username,
+      role: payload.role,
       passwordHash,
       fullName: payload.fullName,
     });
@@ -99,7 +93,7 @@ export function createAuthService(authRepository, authConfig) {
   };
 
   const login = async (payload) => {
-    const user = await authRepository.findUserByEmailOrUsername(payload.identifier);
+    const user = await authRepository.findUserByEmail(payload.email);
     if (!user || !user.isActive) {
       throw new HttpError(401, "Invalid credentials");
     }

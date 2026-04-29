@@ -1,7 +1,11 @@
 import { HttpError } from "../lib/errors.js";
 
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const usernamePattern = /^[a-zA-Z0-9_.-]{3,30}$/;
+const validRoles = [
+  "technician_operator",
+  "supervisor_maintenance",
+  "administrator",
+];
 
 export function parseRegisterPayload(input) {
   if (!input || typeof input !== "object") {
@@ -10,26 +14,28 @@ export function parseRegisterPayload(input) {
 
   const body = input;
   const email = typeof body.email === "string" ? body.email.trim().toLowerCase() : "";
-  const username =
-    typeof body.username === "string" ? body.username.trim().toLowerCase() : "";
   const password = typeof body.password === "string" ? body.password : "";
+  const role = typeof body.role === "string" ? body.role.trim().toLowerCase() : "";
   const fullName =
     typeof body.fullName === "string" && body.fullName.trim()
       ? body.fullName.trim()
-      : null;
+      : "";
 
-  if (!email || !username || !password) {
-    throw new HttpError(400, "email, username, and password are required");
+  if (!email || !fullName || !password || !role) {
+    throw new HttpError(
+      400,
+      "email, fullName, password, and role are required",
+    );
   }
 
   if (!emailPattern.test(email)) {
     throw new HttpError(400, "email format is invalid");
   }
 
-  if (!usernamePattern.test(username)) {
+  if (!validRoles.includes(role)) {
     throw new HttpError(
       400,
-      "username must be 3-30 chars and use only letters, numbers, dots, underscores, or dashes",
+      "role must be one of: technician_operator, supervisor_maintenance, administrator",
     );
   }
 
@@ -39,9 +45,9 @@ export function parseRegisterPayload(input) {
 
   return {
     email,
-    username,
-    password,
     fullName,
+    password,
+    role,
   };
 }
 
@@ -51,16 +57,19 @@ export function parseLoginPayload(input) {
   }
 
   const body = input;
-  const identifier =
-    typeof body.identifier === "string" ? body.identifier.trim().toLowerCase() : "";
+  const email = typeof body.email === "string" ? body.email.trim().toLowerCase() : "";
   const password = typeof body.password === "string" ? body.password : "";
 
-  if (!identifier || !password) {
-    throw new HttpError(400, "identifier and password are required");
+  if (!email || !password) {
+    throw new HttpError(400, "email and password are required");
+  }
+
+  if (!emailPattern.test(email)) {
+    throw new HttpError(400, "email format is invalid");
   }
 
   return {
-    identifier,
+    email,
     password,
   };
 }

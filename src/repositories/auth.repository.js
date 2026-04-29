@@ -4,34 +4,6 @@ export function createAuthRepository(prisma) {
       where: { email },
     });
 
-  const findUserByUsername = (username) =>
-    prisma.user.findUnique({
-      where: { username },
-    });
-
-  const findUserByEmailOrUsername = (identifier) =>
-    prisma.user.findFirst({
-      where: {
-        OR: [{ email: identifier }, { username: identifier }],
-      },
-    });
-
-  const findActiveUserById = (id) =>
-    prisma.user.findFirst({
-      where: {
-        id,
-        isActive: true,
-      },
-      select: {
-        id: true,
-        email: true,
-        username: true,
-        role: true,
-        fullName: true,
-        avatarUrl: true,
-      },
-    });
-
   const createUser = (data) =>
     prisma.user.create({
       data,
@@ -110,9 +82,6 @@ export function createAuthRepository(prisma) {
 
   return {
     findUserByEmail,
-    findUserByUsername,
-    findUserByEmailOrUsername,
-    findActiveUserById,
     createUser,
     updateLastLoginAt,
     createRefreshToken,

@@ -5,7 +5,8 @@ dotenv.config();
 function getEnv(name, fallback) {
   const value = process.env[name] ?? fallback;
   if (!value) {
-    throw new Error(`Missing environment variable: ${name}`);
+    // throw new Error(`Missing environment variable: ${name}`);
+    console.log("Missing environment variable: ${name}");
   }
   return value;
 }
@@ -36,9 +37,7 @@ function getSameSiteEnv(name, fallback = "lax") {
   if (value === "strict" || value === "lax" || value === "none") {
     return value;
   }
-  throw new Error(
-    `Invalid ${name}. Supported values are: strict, lax, none`,
-  );
+  throw new Error(`Invalid ${name}. Supported values are: strict, lax, none`);
 }
 
 const allowedOrigins = getEnv("CORS_ORIGIN", "http://localhost:5173")
@@ -51,7 +50,7 @@ export const env = {
   port: Number(getEnv("PORT", "8000")),
   databaseUrl: getEnv(
     "DATABASE_URL",
-    "postgres://postgres:postgres@localhost:5432/trackora",
+    "postgresql://postgres.vouruazkcvnsdivfkatg:213dawdwa312edwa@aws-1-ap-northeast-1.pooler.supabase.com:6543/postgres?pgbouncer=true",
   ),
   allowedOrigins,
   authAccessTokenSecret: getEnv("AUTH_ACCESS_TOKEN_SECRET"),
